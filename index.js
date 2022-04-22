@@ -46,7 +46,6 @@ app.post("/news-list", (req, res) => {
       );
 
       $(".lfr-pagination-buttons li a", html).each(function () {
-        console.log($(this).attr("href"));
         data.nextPage = $(this).attr("href");
       });
 
@@ -83,6 +82,28 @@ app.post("/the-news", (req, res) => {
       });
 
       res.json(theNews);
+    })
+    .catch((err) => console.log(err));
+});
+
+app.post("/cepea", (req, res) => {
+  axios(req.body.url)
+    .then((response) => {
+      const html = response.data;
+      const $ = cheerio.load(html);
+      const data = {
+        date: "",
+        product: "",
+        value: "",
+      };
+
+      $(".imagenet-widget-tabela", html).each(function () {
+        data.date = $(this).find("tbody").find("tr > td:eq(0)").html();
+        data.product = $(this).find("tbody").find("tr > td:eq(1)").html();
+        data.value = $(this).find("tbody").find("tr > td:eq(2)").html();
+      });
+
+      res.json(data);
     })
     .catch((err) => console.log(err));
 });
